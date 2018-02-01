@@ -132,7 +132,7 @@ let exercise5b : string =
   let greet y = "Hello " ^ y
   in greet "World!";;
 
-let exercise5c : (int*float)-> int  =
+let exercise5c : (int*float) -> int  =
   fun (x, y) -> x + int_of_float y ;;
 
 let exercise5d : int -> bool =
@@ -170,18 +170,22 @@ to the list containing the elements 3, 4, and 5? You'll want to
 replace the "[]" with the correct functional call.
 ......................................................................*)
 
-let square_all (lst : int list) : int list =
-  failwith "square_all not implemented" ;;
+let rec square_all (lst : int list) : int list =
+  match lst with
+  | [] -> []
+  | hd :: tl -> hd * hd :: square_all tl;;
 
-let exercise6 = [] ;;
+let exercise6 = square_all [3;4;5] ;;
 
 (*......................................................................
 Exercise 7: Define a recursive function that sums an integer
 list. (What's a sensible return value for the empty list?)
 ......................................................................*)
 
-let sum (lst : int list) : int =
-  failwith "sum not implemented" ;;
+let rec sum (lst : int list) : int =
+  match lst with
+  | [] -> 0
+  | hd :: tl -> hd + sum tl;;
 
 (*......................................................................
 Exercise 8: Define a recursive function that returns the maximum
@@ -190,8 +194,11 @@ can raise an appropriate exception -- a Match_failure or
 Invalid_argument exception for instance.
 ......................................................................*)
 
-let max_list (lst : int list) : int =
-  failwith "max_list not implemented" ;;
+let rec max_list (lst : int list) : int =
+  match lst with
+  | [] -> raise (Invalid_argument "empty list")
+  | [a] -> a
+  | hd :: tl -> if hd > max_list tl then hd else max_list tl ;;
 
 (*......................................................................
 Exercise 9: Define a function zip, that takes two int lists and
@@ -205,8 +212,25 @@ length lists, to just pad the shorter list with, say, false values, so
 that, zip [1] [2; 3; 4] = [(1, 2); (false, 3); (false, 4)]?
 ......................................................................*)
 
-let zip (x : int list) (y : int list) : (int * int) list =
-  failwith "zip not implemented" ;;
+(* let rec zip (x : int list) (y : int list) : (int * int) list =
+  match x with
+  | [a] -> (match y with
+           | [b] -> [(a, b)]
+           | _ ->  raise (Invalid_argument "different length"))
+  | hdx :: tlx -> (match y with
+                | [c] -> raise (Invalid_argument "different length")
+                | [] -> raise (Invalid_argument "different length")
+                | hdy :: tly -> (hdx, hdy) :: zip tlx tly);; *)
+
+
+let rec zip (x : int list) (y : int list) : (int * int) list =
+  match x, y with
+  | hdx :: tlx , hdy :: tly -> (hdx, hdy) :: zip tlx tly
+  | [], [] -> []
+  | _, _ -> raise (Invalid_argument "different length");;
+
+
+
 
 (*.....................................................................
 Exercise 10: Recall the definition of the function prods from lecture
